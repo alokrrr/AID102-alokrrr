@@ -2,26 +2,21 @@
 
 from fastapi import APIRouter, HTTPException
 from app.services.soil_analysis import analyze_soil
+from app.models.soil import SoilAnalysisRequest
 
 router = APIRouter()
 
 
 @router.post("/analyze-soil")
-def analyze_soil_endpoint(payload: dict):
+def analyze_soil_endpoint(payload: SoilAnalysisRequest):
     """
     API endpoint to analyze soil health using AI logic.
     """
 
-    crop = payload.get("crop")
-    soil_data = payload.get("soil_data")
-
-    if not crop or not soil_data:
-        raise HTTPException(
-            status_code=400,
-            detail="Payload must contain 'crop' and 'soil_data'"
-        )
-
-    result = analyze_soil(crop, soil_data)
+    result = analyze_soil(
+        crop=payload.crop,
+        soil_data=payload.soil_data.dict()
+    )
 
     if "error" in result:
         raise HTTPException(

@@ -6,41 +6,34 @@ from app.ai_engine.cotton_logic import analyze_cotton_soil
 
 
 def analyze_soil(crop: str, soil_data: dict) -> dict:
-    """
-    Master soil analysis service.
-    Routes soil data to the appropriate crop AI engine.
-
-    Parameters:
-        crop (str): Crop type (wheat, rice, cotton)
-        soil_data (dict): Soil parameters
-
-    Returns:
-        dict: AI-generated soil health analysis
-    """
-
     crop = crop.lower()
+
+    pH = soil_data.get("pH")
+    nitrogen = soil_data.get("nitrogen")
+    potassium = soil_data.get("potassium")
 
     if crop == "wheat":
         return analyze_wheat_soil(
-            pH=soil_data.get("pH"),
-            nitrogen_level=soil_data.get("nitrogen")
+            pH=pH,
+            nitrogen_level=nitrogen
         )
 
     elif crop == "rice":
+        if potassium is None:
+            return {"error": "Potassium value is required for rice analysis"}
         return analyze_rice_soil(
-            pH=soil_data.get("pH"),
-            nitrogen_level=soil_data.get("nitrogen"),
-            potassium_level=soil_data.get("potassium")
+            pH=pH,
+            nitrogen_level=nitrogen,
+            potassium_level=potassium
         )
 
     elif crop == "cotton":
+        if potassium is None:
+            return {"error": "Potassium value is required for cotton analysis"}
         return analyze_cotton_soil(
-            pH=soil_data.get("pH"),
-            nitrogen_level=soil_data.get("nitrogen"),
-            potassium_level=soil_data.get("potassium")
+            pH=pH,
+            nitrogen_level=nitrogen,
+            potassium_level=potassium
         )
 
-    else:
-        return {
-            "error": f"Crop '{crop}' is not supported yet."
-        }
+    return {"error": f"Crop '{crop}' is not supported"}

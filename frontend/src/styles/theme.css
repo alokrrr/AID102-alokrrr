@@ -1,0 +1,57 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+}
+
+.header {
+  background: #0a3d62;
+  color: white;
+  padding: 16px;
+  text-align: center;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+}
+
+button {
+  margin-top: 16px;
+  background: #0a3d62;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.risk.low { color: green; }
+.risk.medium { color: orange; }
+.risk.high { color: red; }
+
+.alert {
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+}
+
+.alert.medium { background: #fff3cd; }
+.alert.high { background: #f8d7da; }

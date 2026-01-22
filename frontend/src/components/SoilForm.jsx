@@ -22,8 +22,8 @@ function SoilForm({ onResult }) {
     };
 
     try {
-      const data = await analyzeSoil(payload);
-      onResult(data.analysis);
+      const response = await analyzeSoil(payload);
+      onResult(response.analysis);
     } catch (err) {
       alert(err.message);
     } finally {
@@ -43,11 +43,19 @@ function SoilForm({ onResult }) {
       </select>
 
       <label>Soil pH</label>
-      <input type="number" step="0.1" required value={pH}
-        onChange={(e) => setPH(e.target.value)} />
+      <input
+        type="number"
+        step="0.1"
+        required
+        value={pH}
+        onChange={(e) => setPH(e.target.value)}
+      />
 
       <label>Nitrogen Level</label>
-      <select value={nitrogen} onChange={(e) => setNitrogen(e.target.value)}>
+      <select
+        value={nitrogen}
+        onChange={(e) => setNitrogen(e.target.value)}
+      >
         <option value="low">Low</option>
         <option value="medium">Medium</option>
         <option value="high">High</option>
@@ -56,8 +64,10 @@ function SoilForm({ onResult }) {
       {crop !== "wheat" && (
         <>
           <label>Potassium Level</label>
-          <select value={potassium}
-            onChange={(e) => setPotassium(e.target.value)}>
+          <select
+            value={potassium}
+            onChange={(e) => setPotassium(e.target.value)}
+          >
             <option value="low">Low</option>
             <option value="medium">Medium</option>
             <option value="high">High</option>

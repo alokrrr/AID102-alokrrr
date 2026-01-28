@@ -1,9 +1,16 @@
-function AlertBox({ risk }) {
-  if (!risk || risk === "Low") return null;
+function AlertBox({ alerts }) {
+  if (!alerts || alerts.length === 0) return null;
 
   return (
-    <div className={`alert ${risk.toLowerCase()}`}>
-      ⚠ {risk} priority soil alert detected
+    <div style={{ marginBottom: "20px" }}>
+      {alerts.map((alert, index) => (
+        <div
+          key={index}
+          className={`alert ${alert.severity.toLowerCase()}`}
+        >
+          <strong>{alert.type}:</strong> {alert.message}
+        </div>
+      ))}
     </div>
   );
 }

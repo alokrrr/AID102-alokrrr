@@ -1,7 +1,11 @@
 from app.ai_engine.risk_scoring import calculate_risk_score
 
 
-def analyze_cotton_soil(pH: float, nitrogen_level: str) -> dict:
+def analyze_cotton_soil(
+    pH: float,
+    nitrogen_level: str,
+    potassium_level: str
+) -> dict:
     result = {
         "crop": "Cotton",
         "soil_status": None,
@@ -51,7 +55,7 @@ def analyze_cotton_soil(pH: float, nitrogen_level: str) -> dict:
         nutrient_excesses.append("nitrogen")
 
         explanation_parts.append(
-            "Excess nitrogen can promote vegetative growth and increase pest risk."
+            "Excess nitrogen promotes vegetative growth and increases pest risk."
         )
 
         result["recommendations"].append(
@@ -82,15 +86,40 @@ def analyze_cotton_soil(pH: float, nitrogen_level: str) -> dict:
     else:
         result["decision_factors"]["Nitrogen"] = "Normal"
 
+    # =========================
+    # STEP 3: Potassium Evaluation
+    # =========================
+    if potassium_level.lower() == "low":
+        nutrient_deficiencies.append("potassium")
+
+        explanation_parts.append(
+            "Low potassium affects boll formation and fiber quality."
+        )
+
+        result["recommendations"].append(
+            "Apply potassium fertilizer to improve cotton fiber quality."
+        )
+
+        result["decision_factors"]["Potassium"] = "Medium impact (low potassium)"
+
+        result["alerts"].append({
+            "type": "Potassium Deficiency",
+            "severity": "Medium",
+            "message": "Low potassium detected. Fiber quality may be affected."
+        })
+
+    else:
+        result["decision_factors"]["Potassium"] = "Normal"
+
     # =====================
-    # STEP 3: Crop Sensitivity
+    # STEP 4: Crop Sensitivity
     # =====================
     result["decision_factors"]["Crop Sensitivity"] = (
-        "High (cotton sensitive to both nitrogen excess and deficiency)"
+        "High (cotton sensitive to nutrient imbalance)"
     )
 
     # =====================
-    # STEP 4: Risk Scoring
+    # STEP 5: Risk Scoring
     # =====================
     risk = calculate_risk_score(
         pH_status=pH_status,

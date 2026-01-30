@@ -1,3 +1,4 @@
+from unittest import result
 from app.ai_engine.risk_scoring import calculate_risk_score
 
 
@@ -9,8 +10,10 @@ def analyze_wheat_soil(pH: float, nitrogen_level: str) -> dict:
         "recommendations": [],
         "explanation": "",
         "decision_factors": {},
+        "decision_flow": [],
         "alerts": []
     }
+
 
     explanation_parts = []
     nutrient_deficiencies = []
@@ -45,6 +48,11 @@ def analyze_wheat_soil(pH: float, nitrogen_level: str) -> dict:
         pH_status = "normal"
         result["soil_status"] = "Normal"
         result["decision_factors"]["pH"] = "Normal"
+        result["decision_flow"].append("Evaluated soil pH level")
+
+        if pH < 5.5:
+            result["decision_flow"].append("Detected acidic soil condition")
+
 
     # =========================
     # STEP 2: Nitrogen Evaluation
@@ -72,6 +80,11 @@ def analyze_wheat_soil(pH: float, nitrogen_level: str) -> dict:
 
     else:
         result["decision_factors"]["Nitrogen"] = "Normal"
+        result["decision_flow"].append("Evaluated nitrogen availability")
+
+        if nitrogen_level.lower() == "low":
+            result["decision_flow"].append("Detected nitrogen deficiency")
+
 
     # =====================
     # STEP 3: Crop Sensitivity
@@ -79,6 +92,7 @@ def analyze_wheat_soil(pH: float, nitrogen_level: str) -> dict:
     result["decision_factors"]["Crop Sensitivity"] = (
         "High (wheat is sensitive to acidic soil and nitrogen deficiency)"
     )
+    result["decision_flow"].append("Calculated overall soil risk using combined stress factors")
 
     # =====================
     # STEP 4: Risk Scoring

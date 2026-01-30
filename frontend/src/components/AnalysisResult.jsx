@@ -1,3 +1,6 @@
+import DecisionTimeline from "./DecisionTimeline.jsx";
+<DecisionTimeline steps={result.decision_flow} />
+
 import PHIndicator from "./PHIndicator.jsx";
 import SoilHealthBar from "./SoilHealthBar.jsx";
 import NutrientChart from "./NutrientChart.jsx";

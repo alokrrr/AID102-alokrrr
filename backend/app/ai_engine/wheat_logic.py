@@ -12,6 +12,9 @@ def analyze_wheat_soil(pH: float, nitrogen_level: str) -> dict:
         "decision_factors": {},
         "decision_flow": [],
         "alerts": []
+        "confidence": None,
+        "confidence_reason": ""
+
     }
 
 
@@ -115,3 +118,31 @@ def analyze_wheat_soil(pH: float, nitrogen_level: str) -> dict:
         )
 
     return result
+    # =====================
+    # STEP 6: Confidence Scoring
+    # =====================
+
+    confidence = 1.0
+    confidence_reasons = []
+
+    # Penalize for severe soil conditions
+
+    if pH_status == "severe":
+    confidence -= 0.2
+    confidence_reasons.append("Severe soil acidity increases uncertainty")
+
+    # Penalize for nutrient imbalance
+
+    if nutrient_deficiencies or nutrient_excesses:
+    confidence -= 0.1
+    confidence_reasons.append("Nutrient imbalance affects prediction certainty")
+
+    # Clamp confidence
+    confidence = max(0.5, round(confidence, 2))
+
+    result["confidence"] = confidence
+
+    if confidence_reasons:
+    result["confidence_reason"] = "; ".join(confidence_reasons)
+else:
+    result["confidence_reason"] = "High confidence based on stable soil conditions"

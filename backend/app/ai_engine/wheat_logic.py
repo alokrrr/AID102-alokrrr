@@ -1,4 +1,3 @@
-from unittest import result
 from app.ai_engine.risk_scoring import calculate_risk_score
 
 
@@ -11,12 +10,10 @@ def analyze_wheat_soil(pH: float, nitrogen_level: str) -> dict:
         "explanation": "",
         "decision_factors": {},
         "decision_flow": [],
-        "alerts": []
+        "alerts": [],
         "confidence": None,
         "confidence_reason": ""
-
     }
-
 
     explanation_parts = []
     nutrient_deficiencies = []
@@ -25,6 +22,8 @@ def analyze_wheat_soil(pH: float, nitrogen_level: str) -> dict:
     # =======================
     # STEP 1: pH Evaluation
     # =======================
+    result["decision_flow"].append("Evaluated soil pH level")
+
     if pH < 5.5:
         pH_status = "severe"
         result["soil_status"] = "Acidic"
@@ -37,29 +36,26 @@ def analyze_wheat_soil(pH: float, nitrogen_level: str) -> dict:
             "Apply lime to correct soil acidity before adding fertilizers."
         )
 
-        # Explainable AI factor
         result["decision_factors"]["pH"] = "High impact (acidic soil)"
 
-        # Alert
         result["alerts"].append({
             "type": "Soil Acidity",
             "severity": "High",
             "message": "Soil is acidic. Lime application is required before fertilization."
         })
 
+        result["decision_flow"].append("Detected acidic soil condition")
+
     else:
         pH_status = "normal"
         result["soil_status"] = "Normal"
         result["decision_factors"]["pH"] = "Normal"
-        result["decision_flow"].append("Evaluated soil pH level")
-
-        if pH < 5.5:
-            result["decision_flow"].append("Detected acidic soil condition")
-
 
     # =========================
     # STEP 2: Nitrogen Evaluation
     # =========================
+    result["decision_flow"].append("Evaluated nitrogen availability")
+
     if nitrogen_level.lower() == "low":
         nutrient_deficiencies.append("nitrogen")
 
@@ -67,39 +63,37 @@ def analyze_wheat_soil(pH: float, nitrogen_level: str) -> dict:
             "Nitrogen level is low. Wheat requires nitrogen for healthy vegetative growth."
         )
 
+        result["recommendations"].append(
+            "Apply nitrogen fertilizer (urea) in split doses."
+        )
+
         result["decision_factors"]["Nitrogen"] = "Medium impact (low nitrogen)"
 
-        if pH_status == "normal":
-            result["recommendations"].append(
-                "Apply nitrogen fertilizer (urea) in split doses."
-            )
-
-        # Alert
         result["alerts"].append({
             "type": "Nitrogen Deficiency",
             "severity": "Medium",
             "message": "Low nitrogen detected. Apply nitrogen fertilizer appropriately."
         })
 
+        result["decision_flow"].append("Detected nitrogen deficiency")
+
     else:
         result["decision_factors"]["Nitrogen"] = "Normal"
-        result["decision_flow"].append("Evaluated nitrogen availability")
-
-        if nitrogen_level.lower() == "low":
-            result["decision_flow"].append("Detected nitrogen deficiency")
-
 
     # =====================
     # STEP 3: Crop Sensitivity
     # =====================
     result["decision_factors"]["Crop Sensitivity"] = (
-        "High (wheat is sensitive to acidic soil and nitrogen deficiency)"
+        "High (wheat sensitive to acidic soil and nitrogen deficiency)"
     )
-    result["decision_flow"].append("Calculated overall soil risk using combined stress factors")
 
     # =====================
     # STEP 4: Risk Scoring
     # =====================
+    result["decision_flow"].append(
+        "Calculated overall soil risk using combined stress factors"
+    )
+
     risk = calculate_risk_score(
         pH_status=pH_status,
         nutrient_deficiencies=nutrient_deficiencies,
@@ -109,40 +103,31 @@ def analyze_wheat_soil(pH: float, nitrogen_level: str) -> dict:
     result["risk_level"] = risk["risk_level"]
     result["explanation"] = " ".join(explanation_parts)
 
-    # =====================
-    # STEP 5: Default Safe Case
-    # =====================
     if not result["recommendations"]:
         result["recommendations"].append(
             "Soil conditions are suitable for wheat cultivation."
         )
 
-    return result
     # =====================
-    # STEP 6: Confidence Scoring
+    # STEP 5: Confidence Scoring
     # =====================
-
     confidence = 1.0
     confidence_reasons = []
 
-    # Penalize for severe soil conditions
-
     if pH_status == "severe":
-    confidence -= 0.2
-    confidence_reasons.append("Severe soil acidity increases uncertainty")
-
-    # Penalize for nutrient imbalance
+        confidence -= 0.2
+        confidence_reasons.append("Severe soil acidity increases uncertainty")
 
     if nutrient_deficiencies or nutrient_excesses:
-    confidence -= 0.1
-    confidence_reasons.append("Nutrient imbalance affects prediction certainty")
+        confidence -= 0.1
+        confidence_reasons.append("Nutrient imbalance affects prediction certainty")
 
-    # Clamp confidence
     confidence = max(0.5, round(confidence, 2))
-
     result["confidence"] = confidence
 
     if confidence_reasons:
-    result["confidence_reason"] = "; ".join(confidence_reasons)
-else:
-    result["confidence_reason"] = "High confidence based on stable soil conditions"
+        result["confidence_reason"] = "; ".join(confidence_reasons)
+    else:
+        result["confidence_reason"] = "High confidence based on stable soil conditions"
+
+    return result

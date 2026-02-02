@@ -49,3 +49,24 @@ function AnalysisResult({ result }) {
 }
 
 export default AnalysisResult;
+
+<div style={{ marginTop: "12px" }}>
+  <strong>AI Confidence:</strong>{" "}
+  <span
+    style={{
+      color:
+        result.confidence >= 0.8
+          ? "#81c784"
+          : result.confidence >= 0.65
+          ? "#ffb74d"
+          : "#e57373",
+      fontWeight: "bold",
+    }}
+  >
+    {(result.confidence * 100).toFixed(0)}%
+  </span>
+
+  <p style={{ fontSize: "0.9rem", opacity: 0.85, marginTop: "4px" }}>
+    {result.confidence_reason}
+  </p>
+</div>

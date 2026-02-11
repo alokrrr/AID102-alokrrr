@@ -10,9 +10,14 @@ app = FastAPI(
     title="SoilSense – Intelligent Soil Health Analyzer",
     version="1.0.0"
 )
+
+# ✅ Updated CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",  # local development
+        "https://soil-sense-ai-seven.vercel.app"  # production frontend
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
